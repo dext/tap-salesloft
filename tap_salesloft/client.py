@@ -41,7 +41,7 @@ class SalesloftStream(RESTStream):
 
     @property
     def authenticator(self):
-        return BearerTokenAuthenticator(self, self.config.get('api_key'))
+        return BearerTokenAuthenticator(token=self.config.get('api_key'))
 
     def get_new_paginator(self):
         if self.replication_key:
