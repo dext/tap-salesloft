@@ -3,7 +3,6 @@ from tap_salesloft.client import SalesloftStream
 from singer_sdk.typing import (
     ArrayType,
     DateTimeType,
-    IntegerType,
     ObjectType,
     PropertiesList,
     Property,
@@ -25,7 +24,7 @@ class ActivityHistoriesStream(SalesloftStream):
         Property('tags', ArrayType(StringType), description='A list of tags for this activity', examples=['["primary"]']),
         Property('static_data', ObjectType(additional_properties=True), description='The static data for this activity', examples=['{"email_id":2}']),
         Property('resource_type', StringType, description='Type of the resource this activity is for. One of: account, person', examples=['person']),
-        Property('resource_id', IntegerType, description='ID of the resource this activity is for. It will be a string for the following resource types: crm_opportunity', examples=[1]),
+        Property('resource_id', StringType, description='ID of the resource this activity is for. It will be a string for the following resource types: crm_opportunity', examples=[1]),
         Property('pinned_at', DateTimeType, description='When this record was pinned', examples=['2019-01-01T00:00:00.000000Z']),
         Property('occurred_at', DateTimeType, description='When this activity occurred', examples=['2019-01-01T00:00:00.000000Z']),
         Property('id', StringType, required=True, description='ID of this activity in {type}-{id} format', examples=['sent_email-722488662']),
