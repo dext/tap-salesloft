@@ -55,6 +55,8 @@ class SalesloftStream(RESTStream):
         if self.replication_key:
             params['sort_direction'] = 'asc'
             params['sort_by'] = self.replication_key
+            params[f'{self.replication_key}[gte]'] = self.config.get('start_date')
+            params[f'{self.replication_key}[lte]'] = self.config.get('end_date')
             if next_page_token is not None:
                 params[f'{self.replication_key}[gt]'] = next_page_token
             else:
