@@ -50,5 +50,6 @@ from .team_template_attachments import TeamTemplateAttachmentsStream
 from .team_templates import TeamTemplatesStream
 from .transcriptions import TranscriptionsStream
 from .transcription_artifacts import TranscriptionArtifactsStream
+from .transcription_sentences import TranscriptionSentencesStream
 from .users import UsersStream
 from .webhook_subscriptions import WebhookSubscriptionsStream
