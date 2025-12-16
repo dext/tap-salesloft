@@ -1,6 +1,7 @@
 import re
 import requests
 import time
+from datetime import datetime, timedelta
 
 from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.helpers._typing import TypeConformanceLevel
@@ -57,7 +58,8 @@ class SalesloftStream(RESTStream):
             params['sort_by'] = self.replication_key
             params[f'{self.replication_key}[lt]'] = self.config.get('end_date')
             if next_page_token is not None:
-                params[f'{self.replication_key}[gt]'] = next_page_token
+                next_datetime = datetime.strptime(next_page_token, "%Y-%m-%dT%H:%M:%S.%fZ")
+                params[f"{self.replication_key}[gt]"] = next_datetime + timedelta(milliseconds=1)
             else:
                 params[f'{self.replication_key}[gt]'] = self.get_starting_timestamp(context).isoformat()
 
