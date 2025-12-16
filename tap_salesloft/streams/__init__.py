@@ -49,5 +49,6 @@ from .tasks import TasksStream
 from .team_template_attachments import TeamTemplateAttachmentsStream
 from .team_templates import TeamTemplatesStream
 from .transcriptions import TranscriptionsStream
+from .transcription_artifacts import TranscriptionArtifactsStream
 from .users import UsersStream
 from .webhook_subscriptions import WebhookSubscriptionsStream
