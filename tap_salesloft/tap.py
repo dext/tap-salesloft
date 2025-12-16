@@ -78,6 +78,7 @@ class TapSalesloft(Tap):
             streams.TranscriptionsStream(self),
             streams.UsersStream(self),
             streams.WebhookSubscriptionsStream(self),
+            streams.TranscriptionArtifactsStream(self),
         ]
 
 if __name__ == '__main__':
