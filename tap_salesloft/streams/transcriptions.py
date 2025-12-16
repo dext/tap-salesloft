@@ -49,3 +49,9 @@ class TranscriptionsStream(SalesloftStream):
             description='Reference to the transcription artifact',
         ),
     ).to_dict()
+
+    def get_child_context(self, record: dict, context: dict) -> dict:
+        '''Return a context dictionary for child streams.'''
+        return {
+            'transcription_id': record['id'],
+        }
