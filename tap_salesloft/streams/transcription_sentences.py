@@ -16,7 +16,7 @@ class TranscriptionSentencesStream(SalesloftStream):
 
     name = 'transcription_sentences'
     path = '/v2/transcriptions/{transcription_id}/sentences'
-    primary_keys = ['id']
+    primary_keys = ['id', 'order_number']
 
     parent_stream_type = TranscriptionsStream
     ignore_parent_replication_keys = True
@@ -26,7 +26,7 @@ class TranscriptionSentencesStream(SalesloftStream):
         Property('start_time', DecimalType, required=True, description='Sentence start time'),
         Property('end_time', DecimalType, required=True, description='Sentence end time'),
         Property('order_number', IntegerType, required=True, description='Sentence order number'),
-        Property('recording_attendee_id', UUIDType, required=True, description='Sentence order number'),
+        Property('recording_attendee_id', UUIDType, required=True, description='Attendee id'),
         Property('text', StringType, description='Sentence text'),
         Property(
             'conversation',
