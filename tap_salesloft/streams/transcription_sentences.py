@@ -16,7 +16,9 @@ class TranscriptionSentencesStream(SalesloftStream):
 
     name = 'transcription_sentences'
     path = '/v2/transcriptions/{transcription_id}/sentences'
-    primary_keys = ['id', 'order_number']
+    # ID is the same value throughout the entire conversation.
+    # We need an additional PK but `order_number` isn't present in older data.
+    primary_keys = ['id', 'start_time', 'end_time']
 
     parent_stream_type = TranscriptionsStream
     ignore_parent_replication_keys = True
