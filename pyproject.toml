@@ -2,9 +2,10 @@
 name = "tap-salesloft"
 version = "0.0.1"
 description = "`tap-salesloft` is a Singer tap for Salesloft, built with the Meltano Singer SDK."
-requires-python = ">=3.10"
+requires-python = ">=3.10,<=3.14"
 dependencies = [
     "singer-sdk>=0.50.2",
+    "urllib3>=2.6.3",
 ]
 scripts = { "tap-salesloft" = "tap_salesloft.tap:TapSalesloft.cli" }
 
@@ -22,10 +23,6 @@ license = "Apache-2.0"
 packages = [
     { include = "tap_salesloft" },
 ]
-
-[tool.poetry.dependencies]
-python = "<3.14,>=3.10"
-singer-sdk = "~=0.50"
 
 [build-system]
 requires = ["poetry-core"]
