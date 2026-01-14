@@ -21,7 +21,6 @@ class TranscriptionSentencesStream(SalesloftStream):
     primary_keys = ['id', 'start_time', 'end_time']
 
     parent_stream_type = TranscriptionsStream
-    ignore_parent_replication_keys = True
 
     schema = PropertiesList(
         Property('id', StringType, required=True, description='Transcription Id'),
