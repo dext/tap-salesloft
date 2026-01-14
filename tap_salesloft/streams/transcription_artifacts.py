@@ -18,7 +18,6 @@ class TranscriptionArtifactsStream(SalesloftStream):
     replication_key = 'updated_at'
 
     parent_stream_type = TranscriptionsStream
-    ignore_parent_replication_keys = True
 
     schema = PropertiesList(
         Property('id', StringType, required=True, description='Transcription Id'),
