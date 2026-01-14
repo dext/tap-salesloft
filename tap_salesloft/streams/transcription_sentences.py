@@ -19,6 +19,7 @@ class TranscriptionSentencesStream(SalesloftStream):
     # ID is the same value throughout the entire conversation.
     # We need an additional PK but `order_number` isn't present in older data.
     primary_keys = ['id', 'start_time', 'end_time']
+    state_partitioning_keys = []
 
     parent_stream_type = TranscriptionsStream
 
