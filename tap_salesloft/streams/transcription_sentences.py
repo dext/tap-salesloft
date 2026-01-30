@@ -1,3 +1,6 @@
+import hashlib
+import json
+
 from tap_salesloft.client import SalesloftStream
 from tap_salesloft.streams import TranscriptionsStream
 
@@ -16,18 +19,17 @@ class TranscriptionSentencesStream(SalesloftStream):
 
     name = 'transcription_sentences'
     path = '/v2/transcriptions/{transcription_id}/sentences'
-    # ID is the same value throughout the entire conversation.
-    # We need an additional PK but `order_number` isn't present in older data.
-    primary_keys = ['id', 'start_time', 'end_time']
+    primary_keys = ['__pk']
     state_partitioning_keys = []
 
     parent_stream_type = TranscriptionsStream
 
     schema = PropertiesList(
+        Property('__pk', StringType, required=True, description='Surrogate key'),
         Property('id', StringType, required=True, description='Transcription Id'),
         Property('start_time', DecimalType, required=True, description='Sentence start time'),
         Property('end_time', DecimalType, required=True, description='Sentence end time'),
-        Property('order_number', IntegerType, required=True, description='Sentence order number'),
+        Property('order_number', IntegerType, required=False, description='Sentence order number'),
         Property('recording_attendee_id', UUIDType, required=True, description='Attendee id'),
         Property('text', StringType, description='Sentence text'),
         Property(
@@ -39,3 +41,18 @@ class TranscriptionSentencesStream(SalesloftStream):
             description='Reference to the Conversation',
         ),
     ).to_dict()
+
+    def post_process(self, row, context=None) -> dict:
+        row["__pk"] = hashlib.sha256(
+            json.dumps(
+                {
+                    "id": row["id"],
+                    "start_time": str(row["start_time"]),
+                    "end_time": str(row["end_time"]),
+                    "recording_attendee_id": row["recording_attendee_id"],
+                },
+                sort_keys=True,
+                default=str,
+            ).encode("utf-8")
+        ).hexdigest()
+        return row
