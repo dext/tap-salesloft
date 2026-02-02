@@ -44,6 +44,7 @@ class TapSalesloft(Tap):
             streams.CallSentimentsStream(self),
             streams.CallsStream(self),
             streams.ConversationsStream(self),
+            streams.ConversationsExtensiveStream(self),
             streams.CrmAccountTeamMembersStream(self),
             streams.CrmActivitiesStream(self),
             streams.CrmActivityFieldsStream(self),
