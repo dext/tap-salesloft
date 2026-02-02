@@ -17,6 +17,7 @@ from .call_instructions import CallInstructionsStream
 from .call_sentiments import CallSentimentsStream
 from .calls import CallsStream
 from .conversations import ConversationsStream
+from .conversations_extensive import ConversationsExtensiveStream
 from .crm_account_team_members import CrmAccountTeamMembersStream
 from .crm_activites import CrmActivitiesStream
 from .crm_activity_fields import CrmActivityFieldsStream
