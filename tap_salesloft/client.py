@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import re
 import requests
 import time
@@ -57,9 +58,12 @@ class SalesloftStream(RESTStream):
             params['sort_by'] = self.replication_key
             params[f'{self.replication_key}[lt]'] = self.config.get('end_date')
             if next_page_token is not None:
-                params[f'{self.replication_key}[gt]'] = next_page_token
+                # Salesloft API may return the same timestamp even with `gt`
+                params[f'{self.replication_key}[gt]'] = (
+                    datetime.fromisoformat(next_page_token) + timedelta(milliseconds=1)
+                ).isoformat()
             else:
-                params[f'{self.replication_key}[gt]'] = self.get_starting_timestamp(context).isoformat()
+                params[f'{self.replication_key}[gte]'] = self.get_starting_timestamp(context).isoformat()
 
         elif next_page_token is not None:
             params['page'] = next_page_token
