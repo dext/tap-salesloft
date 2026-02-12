@@ -54,7 +54,6 @@ class SalesloftStream(RESTStream):
         return params
 
     def parse_response(self, response: requests.Response):
-        self.logger.error("RESPONSE: %s", response.json())
         rate_seconds_remaining = 61 - int(second_match.findall(response.headers.get('Date', '00:00:61'))[0])
         if rate_seconds_remaining == 61:
             rate_seconds_remaining = 1
