@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 import re
 import requests
 import time
@@ -6,23 +5,10 @@ import time
 from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.helpers._typing import TypeConformanceLevel
 from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.pagination import BaseAPIPaginator, JSONPathPaginator
+from singer_sdk.pagination import JSONPathPaginator
 from singer_sdk.streams import RESTStream
 
 second_match = re.compile('[0-9]{2}:[0-9]{2}:([0-9]{2})')
-
-class SalesloftReplicationKeyPaginator(BaseAPIPaginator):
-    def __init__(self, replication_key):
-        super().__init__(start_value=None)
-        self.replication_key = replication_key
-
-    def has_more(self, response):
-        next_page = extract_jsonpath('$.metadata.paging.next_page', response.json())
-        return next(next_page, None) is not None
-
-    def get_next(self, response):
-        updated_ats = extract_jsonpath(f'$.data[*].{self.replication_key}', response.json())
-        return next(iter(sorted(updated_ats, reverse=True)), None)
 
 class SalesloftStream(RESTStream):
     records_jsonpath = '$.data[*]'
@@ -49,32 +35,26 @@ class SalesloftStream(RESTStream):
         return self.replication_key is not None
 
     def get_new_paginator(self):
-        if self.replication_key:
-            return SalesloftReplicationKeyPaginator(self.replication_key)
-        else:
-            return JSONPathPaginator('$.metadata.paging.next_page')
+        return JSONPathPaginator('$.metadata.paging.next_page')
 
     def get_url_params(self, context, next_page_token):
         params = {'per_page': self.config.get('page_size')}
 
+        if next_page_token is not None:
+            params['page'] = next_page_token
+
         if self.replication_key:
             params['sort_direction'] = 'asc'
             params['sort_by'] = self.replication_key
-            params[f'{self.replication_key}[lt]'] = self.config.get('end_date')
-            if next_page_token is not None:
-                # Salesloft API may return the same timestamp even with `gt`
-                params[f'{self.replication_key}[gt]'] = (
-                    datetime.fromisoformat(next_page_token) + timedelta(milliseconds=1)
-                ).isoformat()
-            else:
-                params[f'{self.replication_key}[gte]'] = self.get_starting_timestamp(context).isoformat()
+            params[f"{self.replication_key}[lt]"] = self.config.get("end_date")
+            self.logger.warning(f"end_date: {type(self.config.get('end_date'))}")
+            params[f'{self.replication_key}[gte]'] = self.get_starting_timestamp(context).isoformat()
 
-        elif next_page_token is not None:
-            params['page'] = next_page_token
-
+        self.logger.info(f"Params: {params}")
         return params
 
     def parse_response(self, response: requests.Response):
+        self.logger.error("RESPONSE: %s", response.json())
         rate_seconds_remaining = 61 - int(second_match.findall(response.headers.get('Date', '00:00:61'))[0])
         if rate_seconds_remaining == 61:
             rate_seconds_remaining = 1
