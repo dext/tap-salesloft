@@ -48,10 +48,9 @@ class SalesloftStream(RESTStream):
             params['sort_direction'] = 'asc'
             params['sort_by'] = self.replication_key
             params[f'{self.replication_key}[gte]'] = self.get_starting_timestamp(context).isoformat()
-            params[f'{self.replication_key}[lt]'] = datetime.fromisoformat(
-                self.config.get('end_date')
-            ).isoformat()
-
+            end_date = self.config.get("end_date")
+            if end_date:
+                params[f'{self.replication_key}[lt]'] = datetime.fromisoformat(end_date).isoformat()
         return params
 
     def parse_response(self, response: requests.Response):
